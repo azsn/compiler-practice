@@ -1,0 +1,31 @@
+PROGRAM: <FUNC, ...>
+FUNC: func IDEN ( ARGS ) <TYPE> { BLOCK }
+IDEN: /[a-zA-Z_]+/
+NUMBER: /[0-9]+/
+BOOL: [true, false]
+TYPE: [int, bool]
+ARGS: <TYPE IDEN, ...>
+BLOCK: <[IF, WHILE, DECLARATION, ASSIGNMENT, FUNC_CALL, RETURN], ...>
+IF: if ( EXPR ) { BLOCK } <else { }>
+WHILE: while ( EXPR ) { BLOCK }
+DECLARATION: TYPE IDEN = EXPR;
+ASSIGNMENT: IDEN = EXPR ;
+FUNC_CALL: IDEN ( <EXPR, ...> ) ;
+RETURN: return <EXPR> ;
+EXPR: [FUNC_CALL, IDEN, NUMBER, BOOL, EXPR [+,-,*,/,>,<,==,!=] EXPR]
+
+example:
+
+func f(int x, bool y) int {
+	if (y) {
+		int z = x * 2;
+		return z * 3;
+	}
+	return x;
+}
+
+func main() {
+	print(f(5, false));
+	print(f(9, true));
+	return;
+}
