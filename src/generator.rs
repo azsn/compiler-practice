@@ -38,8 +38,9 @@ pub fn generate(program: &parser::ProgramNode) {
 		arg_types: vec!{SymbolType::Bool},
 	});
 
-	println!("void print_int(int v) {{ printf(\"%d\", v); }}");
-	println!("void print_bool(int v) {{ printf(\"%t\", v); }}");
+	println!("#include <stdio.h>");
+	println!("void print_int(int v) {{ printf(\"%d\\n\", v); }}");
+	println!("void print_bool(int v) {{ if (v) printf(\"true\\n\"); else printf(\"false\\n\"); }}");
 
 	// Add all functions to global symbol table before generating rest of code so that
 	// functions can be referenced out of order.
