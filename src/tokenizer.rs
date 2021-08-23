@@ -4,10 +4,8 @@ use regex::bytes::Regex;
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum TokenType {
 	Func, // func
-	Int, // int
-	Bool, // bool
-	True, // true
-	False, // false
+	Type, // (int|bool)
+	Bool, // (true|false)
 	If, // if
 	Else, // else
 	While, // while
@@ -32,12 +30,10 @@ pub enum TokenType {
 }
 
 lazy_static! {
-	static ref TOKEN_REGEX: [(TokenType, Regex); 26] = [
+	static ref TOKEN_REGEX: [(TokenType, Regex); 24] = [
 		(TokenType::Func,       Regex::new(r"\A\bfunc\b").unwrap()),
-		(TokenType::Int,        Regex::new(r"\A\bint\b").unwrap()),
-		(TokenType::Bool,       Regex::new(r"\A\bbool\b").unwrap()),
-		(TokenType::True,       Regex::new(r"\A\btrue\b").unwrap()),
-		(TokenType::False,      Regex::new(r"\A\bfalse\b").unwrap()),
+		(TokenType::Type,        Regex::new(r"\A\b(int|bool)\b").unwrap()),
+		(TokenType::Bool,       Regex::new(r"\A\b(true|false)\b").unwrap()),
 		(TokenType::If,         Regex::new(r"\A\bif\b").unwrap()),
 		(TokenType::Else,       Regex::new(r"\A\belse\b").unwrap()),
 		(TokenType::While,      Regex::new(r"\A\bwhile\b").unwrap()),
@@ -62,39 +58,51 @@ lazy_static! {
 	];
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
-	typ: TokenType,
-	value: Vec<u8>, // Only filled on Identifier or Number
+	pub typ: TokenType,
+	pub value: Vec<u8>, // Only filled on Identifier or Number
+	pub line: usize,
+	pub col: usize,
 }
 
 pub fn tokenize(ccode: &[u8]) -> Vec<Token> {
 	let mut code = ccode;
 	let mut tokens = Vec::new();
+	let mut line: usize = 1;
+	let mut col: usize = 1;
 
 	'outer: while code.len() > 0 {
 		// Trim leading whitespace
 		while code[0] == b' ' || code[0] == b'\n' || code[0] == b'\r' || code[0] == b'\t' {
-			code = &code[1..]
+			if code[0] == b'\n' || code[0] == b'\r' {
+				line += 1;
+				col = 0;
+			}
+			code = &code[1..];
+			col += 1;
 		}
 
 		for (typ, regex) in TOKEN_REGEX.iter() {
 			if let Some(mat) = regex.find(&code) {
 				let typ = *typ;
 				let value = if typ == TokenType::Identifier
-					|| typ == TokenType::Number {
+					|| typ == TokenType::Number 
+					|| typ == TokenType::Bool
+					|| typ == TokenType::Type {
 					code[..mat.end()].to_vec()
 				} else {
-					b"".to_vec()
+					Vec::new()
 				};
 
-				tokens.push(Token{ typ, value });
+				tokens.push(Token{ typ, value, line, col });
 				code = &code[mat.end()..];
+				col += mat.end();
 				continue 'outer;
 			}
 		}
 
-		panic!("Tokenize matched no token types: {:?}", str::from_utf8(code).unwrap());
+		panic!("Tokenizer: Code does not match any token type: {:?}", str::from_utf8(code).unwrap());
 	}
 
 	return tokens;

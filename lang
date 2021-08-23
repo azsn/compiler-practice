@@ -5,14 +5,16 @@ NUMBER: /[0-9]+/
 BOOL: [true, false]
 TYPE: [int, bool]
 ARGS: <TYPE IDEN, ...>
-BLOCK: <[IF, WHILE, DECLARATION, ASSIGNMENT, FUNC_CALL, RETURN], ...>
+BLOCK: <STATEMENT, ...>
+STATEMENT: [IF, WHILE, DECLARATION, ASSIGNMENT, FUNC_CALL, RETURN]
 IF: if ( EXPR ) { BLOCK } <else { }>
 WHILE: while ( EXPR ) { BLOCK }
 DECLARATION: TYPE IDEN = EXPR;
 ASSIGNMENT: IDEN = EXPR ;
 FUNC_CALL: IDEN ( <EXPR, ...> ) ;
 RETURN: return <EXPR> ;
-EXPR: [FUNC_CALL, IDEN, NUMBER, BOOL, EXPR [+,-,*,/,>,<,==,!=] EXPR]
+EXPR: [VAL <[+,-,*,/,>,<,==,!=] VAL>]
+VAL: [IDEN, NUMBER, BOOL, FUNC_CALL, ( EXPR )]
 
 example:
 
