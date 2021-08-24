@@ -10,7 +10,7 @@ fn main() {
 		bool a = true != false;
 		if (y) {
 			int z = x * 2;
-			return (3 == (z * 3)) / 9;
+			return (3 + (z * 3)) / 2;
 		} else { return 1; }
 		return x;
 	}

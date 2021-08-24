@@ -309,6 +309,10 @@ fn generate_expression(expr: &parser::ExprNode, symbols: &Vec<&SymbolTable>) -> 
 		if right_type != left_type {
 			panic!("Generator: Type of right side of expression does not match type of left.");
 		}
+
+		if op == &parser::OpType::GreaterThan || op == &parser::OpType::LessThan || op == &parser::OpType::Equals || op == &parser::OpType::NotEquals {
+			return SymbolType::Bool;
+		}
 	}
 
 	return left_type;
