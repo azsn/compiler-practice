@@ -20,13 +20,13 @@ pub enum TokenType {
 	Semicolon, // ;
 	Assignment, // =
 	Plus, // +
-	Minus, // -
 	Multiply, // *
 	Divide, // /
 	GreaterThan, // >
 	LessThan, // <
 	Identifier, // [a-zA-Z_]+
-	Number, // [0-9]+
+	Number, // -?[0-9]+
+	Minus, // -
 }
 
 lazy_static! {
@@ -48,13 +48,13 @@ lazy_static! {
 		(TokenType::Semicolon,  Regex::new(r"\A;").unwrap()),
 		(TokenType::Assignment, Regex::new(r"\A=").unwrap()),
 		(TokenType::Plus,       Regex::new(r"\A\+").unwrap()),
-		(TokenType::Minus,      Regex::new(r"\A-").unwrap()),
 		(TokenType::Multiply,   Regex::new(r"\A\*").unwrap()),
 		(TokenType::Divide,     Regex::new(r"\A/").unwrap()),
 		(TokenType::GreaterThan,Regex::new(r"\A>").unwrap()),
 		(TokenType::LessThan,   Regex::new(r"\A<").unwrap()),
 		(TokenType::Identifier, Regex::new(r"\A[a-zA-Z_]+").unwrap()),
-		(TokenType::Number,     Regex::new(r"\A[0-9]+").unwrap()),
+		(TokenType::Number,     Regex::new(r"\A-?[0-9]+").unwrap()),
+		(TokenType::Minus,      Regex::new(r"\A-").unwrap()),
 	];
 }
 
