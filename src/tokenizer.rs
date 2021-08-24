@@ -74,13 +74,17 @@ pub fn tokenize(ccode: &[u8]) -> Vec<Token> {
 
 	'outer: while code.len() > 0 {
 		// Trim leading whitespace
-		while code[0] == b' ' || code[0] == b'\n' || code[0] == b'\r' || code[0] == b'\t' {
+		while code.len() > 0 && (code[0] == b' ' || code[0] == b'\n' || code[0] == b'\r' || code[0] == b'\t') {
 			if code[0] == b'\n' || code[0] == b'\r' {
 				line += 1;
 				col = 0;
 			}
 			code = &code[1..];
 			col += 1;
+		}
+
+		if code.len() == 0 {
+			break
 		}
 
 		for (typ, regex) in TOKEN_REGEX.iter() {
