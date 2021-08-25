@@ -1,2 +1,5 @@
 run:
-	cargo run | gcc -x c - && ./a.out
+	cargo run > temp.ll
+	clang temp.ll
+	./a.out
+#cargo run | clang -x ll - && ./a.out
